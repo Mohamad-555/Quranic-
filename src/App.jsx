@@ -17,7 +17,8 @@ import ContactTeacher from "./pages/ContactTeacher";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-
+import ResetPassword from "./pages/ResetPassword";
+import ResetPasswordForm from "./pages/ResetPasswordForm";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {
@@ -42,6 +43,8 @@ function App() {
               <Route path="/contact-teacher" element={<ContactTeacher />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPasswordForm />} />
               <Route path="/signup" element={<Signup />} />
             </Routes>
           </main>

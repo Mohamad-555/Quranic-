@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getInstructors, getStudents } from '../data/mockData';  // جلب من API
-import SearchBar from '../components/SearchBar';
-import StudentCard from '../components/StudentCard';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getInstructors, getStudents } from "../data/mockData"; // جلب من API
+import SearchBar from "../components/SearchBar";
+import StudentCard from "../components/StudentCard";
 
 const Students = () => {
   const navigate = useNavigate();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchMode, setSearchMode] = useState('student'); // 'teacher' أو 'student'
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchMode, setSearchMode] = useState("student"); // 'teacher' أو 'student'
   const [instructors, setInstructors] = useState([]);
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,14 +28,16 @@ const Students = () => {
 
   // فلترة البيانات حسب وضع البحث
   const getFilteredData = () => {
-    if (searchMode === 'teacher') {
-      return instructors.filter(instructor =>
+    if (searchMode === "teacher") {
+      return instructors.filter((instructor) =>
         instructor.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     } else {
-      return students.filter(student =>
-        student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (student.email && student.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      return students.filter(
+        (student) =>
+          student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (student.email &&
+            student.email.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
   };
@@ -43,11 +45,11 @@ const Students = () => {
   const filteredData = getFilteredData();
 
   const handleInstructorClick = (instructor) => {
-    navigate('/instructor-students', { state: { instructor } });
+    navigate("/instructor-students", { state: { instructor } });
   };
 
   const handleViewProfile = (student) => {
-    navigate('/student-profile', { state: { student } });
+    navigate(`/student-profile/${student.id}`);
   };
 
   if (loading) {
@@ -60,7 +62,7 @@ const Students = () => {
 
   return (
     <div className="min-h-screen bg-islamic-gray-light">
-      <section className="pt-20" style={{ backgroundColor: '#0e4d3c' }}>
+      <section className="pt-20" style={{ backgroundColor: "#0e4d3c" }}>
         <div className="container mx-auto px-4 py-16">
           <div className="text-center text-white">
             <h1 className="font-amiri text-4xl md:text-5xl font-bold mb-4 text-islamic-golden">
@@ -78,21 +80,21 @@ const Students = () => {
           <div className="flex justify-center mb-6">
             <div className="bg-islamic-gray-light rounded-lg p-1 flex">
               <button
-                onClick={() => setSearchMode('teacher')}
+                onClick={() => setSearchMode("teacher")}
                 className={`px-6 py-2 rounded-md font-cairo transition-colors ${
-                  searchMode === 'teacher'
-                    ? 'bg-islamic-primary text-white'
-                    : 'text-gray-600 hover:text-islamic-primary'
+                  searchMode === "teacher"
+                    ? "bg-islamic-primary text-white"
+                    : "text-gray-600 hover:text-islamic-primary"
                 }`}
               >
                 البحث بالمدرس
               </button>
               <button
-                onClick={() => setSearchMode('student')}
+                onClick={() => setSearchMode("student")}
                 className={`px-6 py-2 rounded-md font-cairo transition-colors ${
-                  searchMode === 'student'
-                    ? 'bg-islamic-primary text-white'
-                    : 'text-gray-600 hover:text-islamic-primary'
+                  searchMode === "student"
+                    ? "bg-islamic-primary text-white"
+                    : "text-gray-600 hover:text-islamic-primary"
                 }`}
               >
                 البحث بالطالب
@@ -104,7 +106,7 @@ const Students = () => {
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             placeholder={
-              searchMode === 'teacher'
+              searchMode === "teacher"
                 ? "البحث عن الطلاب بالمدرس..."
                 : "البحث عن الطلاب بالاسم أو البريد الإلكتروني..."
             }
@@ -113,13 +115,11 @@ const Students = () => {
 
           <div className="text-center">
             <p className="font-cairo text-gray-600">
-              {searchTerm ? (
-                `تم العثور على ${filteredData.length} نتيجة`
-              ) : (
-                searchMode === 'teacher' 
-                  ? `عرض جميع المدرسين (${instructors.length})`
-                  : `عرض جميع الطلاب (${students.length})`
-              )}
+              {searchTerm
+                ? `تم العثور على ${filteredData.length} نتيجة`
+                : searchMode === "teacher"
+                ? `عرض جميع المدرسين (${instructors.length})`
+                : `عرض جميع الطلاب (${students.length})`}
             </p>
           </div>
         </div>
@@ -127,7 +127,7 @@ const Students = () => {
 
       <section className="py-16">
         <div className="container mx-auto px-4">
-          {searchMode === 'teacher' ? (
+          {searchMode === "teacher" ? (
             <>
               <h2 className="font-amiri text-3xl font-bold text-islamic-golden mb-8 text-center">
                 اختر المدرس لعرض طلابه
@@ -173,7 +173,8 @@ const Students = () => {
                 اختر الطالب لعرض ملفه الشخصي
               </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* قسم عرض الطلاب */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                 {filteredData.map((student) => (
                   <StudentCard
                     key={student.id}

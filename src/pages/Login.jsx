@@ -39,7 +39,7 @@ const Login = () => {
       if (token) {
         login(token, role, formData.email);
         setResponseMessage("تم تسجيل الدخول بنجاح!");
-        
+
         // توجيه للصفحة الرئيسية مع تأخير قصير لإظهار رسالة النجاح
         setTimeout(() => {
           navigate("/");
@@ -150,12 +150,12 @@ const Login = () => {
                     تذكرني
                   </span>
                 </label>
-                <a
-                  href="#"
+                <Link
+                  to="/reset-password"
                   className="font-cairo text-sm text-islamic-primary hover:text-islamic-light"
                 >
                   نسيت كلمة المرور؟
-                </a>
+                </Link>
               </div>
 
               <button

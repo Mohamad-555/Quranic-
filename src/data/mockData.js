@@ -1106,7 +1106,7 @@ export const topics = [
     description: "دراسة سيرة النبي محمد صلى الله عليه وسلم",
   },
 ];
-export const NGROK_BASE_URL = 'https://c93a18756914.ngrok-free.app/api/v1';
+export const NGROK_BASE_URL = 'https://9b2b87e252ed.ngrok-free.app/api/v1';
 
 // src/api/getInstructors.js
 import axios from "axios";

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, User, Phone, Mail } from 'lucide-react';
-import StudentCard from '../components/StudentCard';
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ArrowRight, User, Phone, Mail } from "lucide-react";
+import StudentCard from "../components/StudentCard";
 
 const InstructorStudents = () => {
   const location = useLocation();
@@ -12,7 +12,7 @@ const InstructorStudents = () => {
 
   useEffect(() => {
     if (!instructor) {
-      navigate('/students');
+      navigate("/students");
       return;
     }
 
@@ -26,13 +26,13 @@ const InstructorStudents = () => {
   if (!instructor) return null;
 
   const certificate = Array.isArray(instructor.certificate)
-    ? instructor.certificate.join('، ')
+    ? instructor.certificate.join("، ")
     : instructor.certificate;
 
   const avgProgress = student.length
     ? Math.round(
         student.reduce((acc, student) => acc + (student.progress || 0), 0) /
-        student.length
+          student.length
       )
     : 0;
 
@@ -41,10 +41,10 @@ const InstructorStudents = () => {
     0
   );
 
-  const advancedStudents = student.filter((s) => s.level === 'متقدم').length;
+  const advancedStudents = student.filter((s) => s.level === "متقدم").length;
 
   const handleViewProfile = (student) => {
-    navigate('/student-profile', { state: { student, instructor } });
+    navigate(`/student-profile/${student.id}`);
   };
 
   return (
@@ -52,7 +52,7 @@ const InstructorStudents = () => {
       {/* زر الرجوع */}
       <div className="container mx-auto px-4 py-4">
         <button
-          onClick={() => navigate('/students')}
+          onClick={() => navigate("/students")}
           className="flex items-center space-x-2 rtl:space-x-reverse text-islamic-primary hover:text-islamic-light transition-colors font-cairo"
         >
           <ArrowRight size={20} />
@@ -71,15 +71,21 @@ const InstructorStudents = () => {
               <div className="space-y-3">
                 <div className="flex items-center space-x-3 rtl:space-x-reverse">
                   <Mail size={20} className="text-islamic-primary" />
-                  <span className="font-cairo text-gray-700">{instructor.email}</span>
+                  <span className="font-cairo text-gray-700">
+                    {instructor.email}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-3 rtl:space-x-reverse">
                   <Phone size={20} className="text-islamic-golden" />
-                  <span className="font-cairo text-gray-700">{instructor.phone_number}</span>
+                  <span className="font-cairo text-gray-700">
+                    {instructor.phone_number}
+                  </span>
                 </div>
                 <div className="flex items-center space-x-3 rtl:space-x-reverse">
                   <User size={20} className="text-islamic-light" />
-                  <span className="font-cairo text-gray-700">{certificate}</span>
+                  <span className="font-cairo text-gray-700">
+                    {certificate}
+                  </span>
                 </div>
               </div>
             </div>
@@ -102,7 +108,7 @@ const InstructorStudents = () => {
             طلاب الأستاذ {instructor.name}
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {student.map((student) => (
               <StudentCard
                 key={student.id}
@@ -124,7 +130,9 @@ const InstructorStudents = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
             <div className="space-y-4">
               <div className="w-16 h-16 bg-islamic-primary rounded-full flex items-center justify-center mx-auto">
-                <span className="text-white font-bold text-xl">{student.length}</span>
+                <span className="text-white font-bold text-xl">
+                  {student.length}
+                </span>
               </div>
               <h3 className="font-cairo font-bold text-2xl text-islamic-primary">
                 {student.length}
@@ -134,7 +142,9 @@ const InstructorStudents = () => {
 
             <div className="space-y-4">
               <div className="w-16 h-16 bg-islamic-golden rounded-full flex items-center justify-center mx-auto">
-                <span className="text-white font-bold text-xl">{advancedStudents}</span>
+                <span className="text-white font-bold text-xl">
+                  {advancedStudents}
+                </span>
               </div>
               <h3 className="font-cairo font-bold text-2xl text-islamic-primary">
                 {advancedStudents}
@@ -144,7 +154,9 @@ const InstructorStudents = () => {
 
             <div className="space-y-4">
               <div className="w-16 h-16 bg-islamic-light rounded-full flex items-center justify-center mx-auto">
-                <span className="text-white font-bold text-xl">{avgProgress}%</span>
+                <span className="text-white font-bold text-xl">
+                  {avgProgress}%
+                </span>
               </div>
               <h3 className="font-cairo font-bold text-2xl text-islamic-primary">
                 {avgProgress}%
@@ -154,7 +166,9 @@ const InstructorStudents = () => {
 
             <div className="space-y-4">
               <div className="w-16 h-16 bg-islamic-primary rounded-full flex items-center justify-center mx-auto">
-                <span className="text-white font-bold text-xl">{examCount}</span>
+                <span className="text-white font-bold text-xl">
+                  {examCount}
+                </span>
               </div>
               <h3 className="font-cairo font-bold text-2xl text-islamic-primary">
                 {examCount}

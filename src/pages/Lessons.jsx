@@ -9,7 +9,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { attendance, students } from "../data/mockData";
+import { attendance, getStudents } from "../data/mockData";
 import StudentCard from "@/components/StudentCard";
 
 const Lessons = () => {
@@ -35,13 +35,26 @@ const Lessons = () => {
   };
 
   const handleViewProfile = (student) => {
-    navigate("/student-file", { state: { student } });
+    navigate("/student-profile", { state: { student } });
   };
 
-  // جلب بيانات الطلاب بالتفاصيل الكاملة بناءً على الـ id
-  const detailedStudents = students.filter((student) =>
-    course.students.some((s) => s.id === student.id)
-  );
+  const [detailedStudents, setDetailedStudents] = useState([]);
+  useEffect(() => {
+    const fetchStudents = async () => {
+      const allStudents = await getStudents();
+
+      // نفلتر الطلاب الموجودين ضمن الدورة فقط
+      const filtered = allStudents.filter((student) =>
+        course.students.some((s) => s.id === student.id)
+      );
+
+      setDetailedStudents(filtered);
+    };
+
+    if (course) {
+      fetchStudents();
+    }
+  }, [course]);
 
   return (
     <div className="min-h-screen bg-islamic-gray-light pt-20">
@@ -121,10 +134,10 @@ const Lessons = () => {
                   📁 ملفات الدورة
                 </h3>
 
-                {Array.isArray(course.courseFiles) &&
-                course.courseFiles.length > 0 ? (
+                {Array.isArray(course?.course_files) &&
+                course.course_files.length > 0 ? (
                   <ul className="space-y-3">
-                    {course.courseFiles.map((file) => (
+                    {course.course_files.map((file) => (
                       <li
                         key={file.id}
                         className="flex items-center justify-between bg-white px-4 py-3 rounded-md shadow-sm hover:shadow-md transition"
@@ -138,16 +151,15 @@ const Lessons = () => {
                             <path d="M13 2H6a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V6l-3-4zM6 16V4h6v4h4v8H6z" />
                           </svg>
                           <span className="font-cairo text-gray-700">
-                            {file.name}
+                            {file.file_name}
                           </span>
                         </div>
                         <a
-                          href={file.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          href={file.file_path}
+                          download
                           className="text-sm text-islamic-primary hover:underline font-cairo"
                         >
-                          تحميل / عرض
+                          تحميل
                         </a>
                       </li>
                     ))}
@@ -313,7 +325,7 @@ const Lessons = () => {
           <h2 className="font-amiri text-3xl font-bold text-islamic-primary mb-8 text-center">
             الطلاب المسجلين في الدورة
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {detailedStudents.map((student) => (
               <StudentCard
                 key={student.id}

@@ -23,7 +23,7 @@ export default defineConfig({
     port: 3000,
     cors: true,
     origin: 'http://localhost:3000',
-    allowedHosts: ['3442d26425d0.ngrok-free.app'], // ✅ فقط اسم الدومين بدون https
+    allowedHosts: ['9079936e97.ngrok-free.app'], // ✅ فقط اسم الدومين بدون https
     hmr: {
       clientPort: 3000,
     },

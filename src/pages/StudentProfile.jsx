@@ -1,52 +1,72 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { getStudents } from "../data/mockData";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getStudents } from "../data/mockData"; // رجّعناها
+import {
+  ArrowRight,
+  User,
+  BookOpen,
+  Award,
+  Edit3,
+  Save,
+  X,
+  Mail,
+  Phone,
+  Plus,
+} from "lucide-react";
 
 const StudentProfile = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [student, setStudent] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+
+  const calculateAge = (birthDateString) => {
+    if (!birthDateString) return null;
+    const birthDate = new Date(birthDateString);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+    return age;
+  };
+
+  const age = calculateAge(student?.birth_date);
+  const instructor = student?.instructor;
 
   useEffect(() => {
     const fetchStudent = async () => {
-      const email = localStorage.getItem("userEmail"); // 🟢 اجلب الإيميل
-      if (!email) {
-        navigate("/login");
-        return;
-      }
-
       try {
         const students = await getStudents();
-        const foundStudent = students.find((s) => s.email === email);
-        if (!foundStudent) {
+        const matchedStudent = students.find((s) => s.id.toString() === id);
+
+        if (!matchedStudent) {
+          console.warn("الطالب غير موجود.");
           navigate("/students");
-        } else {
-          setStudent(foundStudent);
+          return;
         }
-      } catch (err) {
-        console.error("Error fetching student:", err);
+
+        setStudent(matchedStudent);
+      } catch (error) {
+        console.error("خطأ أثناء تحميل بيانات الطالب:", error);
         navigate("/students");
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchStudent();
-  }, [navigate]);
+  }, [id, navigate]);
 
-  if (loading) {
+  if (!student) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-islamic-gray-light">
-        <p className="font-cairo text-islamic-primary text-lg">
-          جاري تحميل بيانات الطالب...
-        </p>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-lg font-cairo">جاري تحميل بيانات الطالب...</p>
       </div>
     );
   }
-
-  if (!student) return null;
-
   return (
     <div className="min-h-screen bg-islamic-gray-light">
       <div className="container mx-auto px-4 pt-24 pb-4">
@@ -58,7 +78,6 @@ const StudentProfile = () => {
           <span>العودة</span>
         </button>
       </div>
-
 
       {/* 🟢 ترحيب الطالب */}
       <section className="bg-white py-12 shadow-sm">
@@ -91,7 +110,7 @@ const StudentProfile = () => {
               <div className="bg-islamic-gray-light p-4 rounded-lg text-center">
                 <User size={24} className="text-islamic-primary mx-auto mb-2" />
                 <h3 className="font-cairo font-bold text-lg text-islamic-dark">
-                  {student.studentId}
+                  {student.id}
                 </h3>
                 <p className="font-cairo text-gray-600 text-sm">رقم الطالب</p>
               </div>
@@ -102,7 +121,7 @@ const StudentProfile = () => {
                   className="text-islamic-golden mx-auto mb-2"
                 />
                 <h3 className="font-cairo font-bold text-lg text-islamic-dark">
-                  {student.age} سنة
+                  {age !== null ? `${age} سنة` : "غير معروف"}
                 </h3>
                 <p className="font-cairo text-gray-600 text-sm">العمر</p>
               </div>
@@ -119,23 +138,23 @@ const StudentProfile = () => {
             </div>
 
             {/* 🟢 معلومات المدرس */}
-            {instructor && (
+            {instructor ? (
               <div className="bg-islamic-gray-light p-6 rounded-lg">
                 <h3 className="font-cairo font-bold text-xl text-islamic-golden mb-4">
                   معلومات المدرس المشرف
                 </h3>
                 <div className="flex items-center space-x-4 rtl:space-x-reverse mb-4">
                   <img
-                    src={instructor.image}
-                    alt={instructor.name}
+                    src={instructor?.image || "/default-instructor.png"}
+                    alt={instructor?.name || "مدرس"}
                     className="w-16 h-16 rounded-full object-cover"
                   />
                   <div>
                     <h4 className="font-cairo font-bold text-lg text-islamic-dark">
-                      {instructor.name}
+                      {instructor?.name || "غير معروف"}
                     </h4>
                     <p className="font-cairo text-gray-600">
-                      {instructor.certificate}
+                      {instructor?.certificate || "شهادة غير متوفرة"}
                     </p>
                   </div>
                 </div>
@@ -143,18 +162,18 @@ const StudentProfile = () => {
                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <Mail size={16} className="text-islamic-primary" />
                     <span className="font-cairo text-gray-700 text-sm">
-                      {instructor.email}
+                      {instructor?.email || "بريد إلكتروني غير متوفر"}
                     </span>
                   </div>
                   <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <Phone size={16} className="text-islamic-golden" />
                     <span className="font-cairo text-gray-700 text-sm">
-                      {instructor.phone_number}
+                      {instructor?.phone_number || "رقم هاتف غير متوفر"}
                     </span>
                   </div>
                 </div>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </section>
@@ -218,27 +237,34 @@ const StudentProfile = () => {
               </h3>
 
               <div className="space-y-3">
-                {student.quran_passed_parts.map((juz, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center space-x-3 rtl:space-x-reverse p-3 bg-green-50 rounded-lg"
-                  >
-                    <Award size={20} className="text-green-600" />
-                    <span className="font-cairo font-medium text-islamic-dark">
-                      {juz}
-                    </span>
-                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-cairo">
-                      مكتمل
-                    </span>
-                  </div>
-                ))}
+                {student.quran_passed_parts &&
+                student.quran_passed_parts.length > 0 ? (
+                  student.quran_passed_parts.map((juz, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center space-x-3 rtl:space-x-reverse p-3 bg-green-50 rounded-lg"
+                    >
+                      <Award size={20} className="text-green-600" />
+                      <span className="font-cairo font-medium text-islamic-dark">
+                        {juz}
+                      </span>
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-cairo">
+                        مكتمل
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="font-cairo text-gray-500">
+                    لا يوجد أجزاء تم سبرها
+                  </p>
+                )}
               </div>
 
               <div className="mt-6 text-center">
                 <div className="inline-flex items-center space-x-2 rtl:space-x-reverse bg-islamic-gray-light p-3 rounded-lg">
                   <Award size={24} className="text-islamic-golden" />
                   <span className="font-cairo font-bold text-islamic-primary">
-                    {student.quran_passed_parts.length} أجزاء تم سبرها
+                    {student.quran_passed_parts?.length ?? 0} أجزاء تم سبرها
                   </span>
                 </div>
               </div>
@@ -437,7 +463,6 @@ const StudentProfile = () => {
         </div>
       </section>
 
-      {/* 🟢 الامتحانات والتقييمات */}
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="font-amiri text-3xl font-bold text-islamic-golden mb-8">
@@ -445,7 +470,7 @@ const StudentProfile = () => {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {student.exams.map((exam) => (
+            {(student.exams ?? []).map((exam) => (
               <div key={exam.id} className="bg-white p-6 rounded-lg shadow-lg">
                 <h3 className="font-cairo font-bold text-lg text-islamic-dark mb-3">
                   {exam.title}
