@@ -309,7 +309,6 @@ const HalaqahDetails = () => {
               <span className="mr-2 font-bold">الصفحة:</span> {studentRecitation.current_juz_page}
             </div>
           )}
-          </div>
         </li>
       );
     })}
