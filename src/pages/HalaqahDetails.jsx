@@ -264,33 +264,51 @@ const HalaqahDetails = () => {
   </h4>
   <ul className="space-y-2">
     {lessonAttendance.map((record, index) => {
-      const recitationsByLesson = recitations?.recitations_by_lesson || [];
-
-      const lessonRecitations =
-        recitationsByLesson.find(
-          (l) => Number(l.lesson_id) === Number(lesson.id)
-        )?.recitations || [];
-
-      const rec = lessonRecitations.find(
-        (r) => Number(r.student_id) === Number(record.student?.id)
+      // البحث عن التسميعات الخاصة بهذا الدرس
+      const currentLessonRecitations = recitations?.recitations_by_lesson?.find(
+        (lessonData) => Number(lessonData.lesson_id) === Number(lesson.id)
       );
-console.log("🎯 recitations:", recitations);
-console.log("🎯 recitations_by_lesson:", recitations?.recitations_by_lesson);
+
+      // البحث عن تسميع الطالب المحدد
+      const studentRecitation = currentLessonRecitations?.recitations?.find(
+        (recitation) => Number(recitation.student_id) === Number(record.student?.id)
+      );
 
       return (
         <li
           key={index}
-          className="font-cairo text-sm text-gray-700 flex items-center gap-4"
+          className="font-cairo text-sm text-gray-700 space-y-1"
         >
-          <div>
-            <span className="font-bold">الصفحات:</span>{" "}
-            {rec?.recitation_per_page?.length
-              ? rec.recitation_per_page.join(", ")
-              : "—"}
+          <div className="font-medium text-islamic-dark">
+            {record.student?.name}
           </div>
-          <div>
-            <span className="font-bold">التقييم:</span>{" "}
-            {rec?.recitation_evaluation || "—"}
+          <div className="flex items-center gap-4 text-xs">
+            <div>
+              <span className="font-bold text-islamic-primary">الصفحات:</span>{" "}
+              <span className="bg-islamic-gray-light px-2 py-1 rounded">
+                {studentRecitation?.recitation_per_page?.length
+                  ? studentRecitation.recitation_per_page.join(", ")
+                  : "لم يسمع"}
+              </span>
+            </div>
+            <div>
+              <span className="font-bold text-islamic-golden">التقييم:</span>{" "}
+              <span className={`px-2 py-1 rounded text-white ${
+                studentRecitation?.recitation_evaluation === "Excellent" ? "bg-green-500" :
+                studentRecitation?.recitation_evaluation === "Very Good" ? "bg-blue-500" :
+                studentRecitation?.recitation_evaluation === "Good" ? "bg-yellow-500" :
+                studentRecitation?.recitation_evaluation ? "bg-gray-500" : "bg-red-500"
+              }`}>
+                {studentRecitation?.recitation_evaluation || "لا يوجد"}
+              </span>
+            </div>
+          </div>
+          {studentRecitation?.current_juz && (
+            <div className="text-xs text-gray-600">
+              <span className="font-bold">الجزء الحالي:</span> {studentRecitation.current_juz} 
+              <span className="mr-2 font-bold">الصفحة:</span> {studentRecitation.current_juz_page}
+            </div>
+          )}
           </div>
         </li>
       );
