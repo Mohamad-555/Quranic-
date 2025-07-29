@@ -75,9 +75,10 @@ const InstructorDetails = () => {
     }
   }, [instructor]);
 
-  const handleViewStudentFile = (student) => {
-    navigate("/student-file", { state: { studentId: student.id } });
+  const handleViewProfile = (student) => {
+    navigate(`/student-profile/${student.id}`);
   };
+
 
   const handleEditProgress = (student) => {
     setEditingStudent(student.id);
@@ -217,12 +218,12 @@ const InstructorDetails = () => {
             طلاب الأستاذ {instructor.name}
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {student.map((student) => (
               <div key={student.id}>
                 <StudentCard
                   student={{ ...student, instructors: instructor }}
-                  onViewProfile={handleViewStudentFile}
+                  onViewProfile={handleViewProfile}
                   showCurrentCourse={true}
                 />
 

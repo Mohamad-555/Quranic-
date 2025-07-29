@@ -1106,7 +1106,7 @@ export const topics = [
     description: "دراسة سيرة النبي محمد صلى الله عليه وسلم",
   },
 ];
-export const NGROK_BASE_URL = 'https://9b2b87e252ed.ngrok-free.app/api/v1';
+export const NGROK_BASE_URL = 'https://8a6b72db3e9f.ngrok-free.app/api/v1';
 
 // src/api/getInstructors.js
 import axios from "axios";
@@ -1153,6 +1153,109 @@ export const getStudents = async () => {
     return [];
   } catch (err) {
     console.error("Error fetching students:", err);
+    return [];
+  }
+};
+export const getAttendance = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(`${NGROK_BASE_URL}/atten`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+
+    console.log("Attendance fetched:", res.data);
+
+    if (Array.isArray(res.data)) {
+      return res.data;
+    } else if (Array.isArray(res.data.attendance)) {
+      return res.data.attendance;
+    } else {
+      console.error("Unexpected attendance data structure:", res.data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching attendance:", error);
+    return [];
+  }
+};
+
+export const getCourses = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(`${NGROK_BASE_URL}/courses`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+
+    console.log("Courses fetched:", res.data);
+
+    if (Array.isArray(res.data)) {
+      return res.data;
+    } else if (Array.isArray(res.data.courses)) {
+      return res.data.courses;
+    } else {
+      console.error("Unexpected courses data structure:", res.data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching courses:", error);
+    return [];
+  }
+};
+export const getRecitations = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(`${NGROK_BASE_URL}/recitation`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+
+    console.log("Recitations fetched:", res.data);
+
+    // ✅ فحص وجود student_recitation كمصفوفة
+    if (Array.isArray(res.data.student_recitation)) {
+      return res.data.student_recitation;
+    } else {
+      console.error("Unexpected recitations data structure:", res.data);
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching recitations:", error);
+    return [];
+  }
+};
+
+export const getRecitationsByCourseId = async (courseId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(`${NGROK_BASE_URL}/recitation/course/${courseId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "true"
+      }
+    });
+
+    console.log("Recitations by course fetched:", res.data);
+
+    return Array.isArray(res.data) ? res.data : res.data.recitations || [];
+
+  } catch (error) {
+    console.error("Error fetching recitations by course:", error);
     return [];
   }
 };

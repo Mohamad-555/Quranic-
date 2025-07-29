@@ -9,7 +9,7 @@ import {
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
-import { attendance, getStudents } from "../data/mockData";
+import { getStudents, getAttendance } from "../data/mockData";
 import StudentCard from "@/components/StudentCard";
 
 const Lessons = () => {
@@ -35,10 +35,12 @@ const Lessons = () => {
   };
 
   const handleViewProfile = (student) => {
-    navigate("/student-profile", { state: { student } });
+    navigate(`/student-profile/${student.id}`);
   };
 
   const [detailedStudents, setDetailedStudents] = useState([]);
+  const [attendance, setAttendance] = useState([]);
+
   useEffect(() => {
     const fetchStudents = async () => {
       const allStudents = await getStudents();
@@ -55,7 +57,14 @@ const Lessons = () => {
       fetchStudents();
     }
   }, [course]);
+ useEffect(() => {
+      const fetchAttendance = async () => {
+        const data = await getAttendance();
+        setAttendance(data);
+      };
 
+      fetchAttendance();
+    }, []);
   return (
     <div className="min-h-screen bg-islamic-gray-light pt-20">
       {/* زر الرجوع */}
@@ -194,7 +203,7 @@ const Lessons = () => {
           <div className="space-y-4">
             {course.lessons?.map((lesson) => {
               const lessonAttendance = attendance.filter(
-                (a) => a.lesson_details.id === lesson.id
+                (a) => a.lesson.id === lesson.id
               );
 
               const attendanceRate =
